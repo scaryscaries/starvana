@@ -45,7 +45,7 @@ namespace StarVana.Tests
 
             Assert.Equal(2, starships.Count);
             Assert.Equal("Bread", starships[0].Name);
-            Assert.Equal("Truffle", starships[0].Name);
+            Assert.Equal("Truffle", starships[1].Name);
         }
     }
 }
