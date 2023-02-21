@@ -1,4 +1,5 @@
-﻿using StarVana.DTOs;
+﻿using StarVana.Controllers;
+using StarVana.DTOs;
 using System.Net.Http.Headers;
 
 namespace StarVana.Clients
@@ -10,18 +11,32 @@ namespace StarVana.Clients
 
     public class StarWarsClient : IStarWarsClient
     {
-        public StarshipsResponse? GetStarships(string url)
+        private readonly ILogger<StarshipsController> _logger;
+
+        public StarWarsClient(ILogger<StarshipsController> logger)
         {
-            using var client = new HttpClient();
-            client.BaseAddress = new Uri(url);
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            _logger = logger;
+        }
 
-            var response = client.GetAsync(url).Result;
-
-            if (response.IsSuccessStatusCode)
+        public StarshipsResponse? GetStarships(string? url)
+        {
+            if (url != null)
             {
-                var starshipResponseString = response.Content.ReadAsStringAsync().Result.Replace("_", "");
-                return Newtonsoft.Json.JsonConvert.DeserializeObject<StarshipsResponse>(starshipResponseString);
+                using var client = new HttpClient();
+                client.BaseAddress = new Uri(url);
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                var response = client.GetAsync(url).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var starshipResponseString = response.Content.ReadAsStringAsync().Result.Replace("_", "");
+                    return Newtonsoft.Json.JsonConvert.DeserializeObject<StarshipsResponse>(starshipResponseString);
+                }
+            }
+            else
+            {
+                _logger.LogError("StarWarsApi URL is null.");
             }
 
             return null;

@@ -39,7 +39,7 @@ namespace StarVana.Tests
             var starWarsClientMock = new Mock<IStarWarsClient>();
             starWarsClientMock.Setup(x => x.GetStarships(starWarsApiUrl)).Returns(starshipsResponse);
 
-            var starshipController = new StarshipHandler(starWarsClientMock.Object);
+            var starshipController = new StarshipHandler(starWarsClientMock.Object, starWarsApiUrl);
             var starships = starshipController.GetAllStarships(null);
 
             Assert.Equal(2, starships.Count);
@@ -64,6 +64,7 @@ namespace StarVana.Tests
                 Model = "Cat",
                 Manufacturer = "Pony Express"
             };
+
             var starshipsResponse = new StarshipsResponse
             {
                 Count = 2,
@@ -77,10 +78,10 @@ namespace StarVana.Tests
             var starWarsClientMock = new Mock<IStarWarsClient>();
             starWarsClientMock.Setup(x => x.GetStarships(starWarsApiUrl)).Returns(starshipsResponse);
 
-            var starshipController = new StarshipHandler(starWarsClientMock.Object);
+            var starshipController = new StarshipHandler(starWarsClientMock.Object, starWarsApiUrl);
             var starships = starshipController.GetAllStarships("Pony Express");
 
-            Assert.Equal(1, starships.Count);
+            Assert.Single(starships);
             Assert.Equal("Truffle", starships[0].Name);
         }
     }

@@ -11,24 +11,23 @@ namespace StarVana.Controllers
     [Route("[controller]")]
     public class StarshipsController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
-
-        private static readonly IStarWarsClient _starWarsClient = new StarWarsClient();
-
+        private readonly IStarWarsClient _starWarsClient;
+        private readonly IConfiguration _configuration;
         private readonly ILogger<StarshipsController> _logger;
+        private readonly string? _starWarsApiUrl;
 
-        public StarshipsController(ILogger<StarshipsController> logger)
+        public StarshipsController(ILogger<StarshipsController> logger, IConfiguration config)
         {
             _logger = logger;
+            _configuration = config;
+            _starWarsApiUrl = _configuration.GetConnectionString("StarWarsApiUrl");
+            _starWarsClient = new StarWarsClient(_logger);
         }
 
         [HttpGet(Name = "GetStarships")]
         public string Get(string? manufacturer)
         {
-            var starshipHandler = new StarshipHandler(_starWarsClient);
+            var starshipHandler = new StarshipHandler(_starWarsClient, _starWarsApiUrl);
             var starships = starshipHandler.GetAllStarships(manufacturer);
 
             return JsonConvert.SerializeObject(starships, Formatting.Indented);

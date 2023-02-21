@@ -1,25 +1,24 @@
 ﻿using StarVana.Clients;
 using StarVana.DTOs;
-using System;
-using System.Net.Http.Headers;
-using System.Reflection.PortableExecutable;
-using System.Text.Json;
 
 namespace StarVana.Handlers
 {
     public class StarshipHandler
     {
         private readonly IStarWarsClient _starWarsClient;
+        private readonly string? _starWarsApiUrl;
 
-        public StarshipHandler(IStarWarsClient starWarsClient)
+        public StarshipHandler(IStarWarsClient starWarsClient, string? starWarsApiUrl)
         {
             _starWarsClient = starWarsClient;
+            _starWarsApiUrl = starWarsApiUrl;
         }
+
         public List<Starship> GetAllStarships(string? manufacturer)
         {
             var starshipList = new List<Starship>();
 
-            var starWarsApiUrl = "https://swapi.dev/api/starships";
+            var starWarsApiUrl = _starWarsApiUrl;
             var isNextPage = true;
 
             while (isNextPage)
@@ -43,7 +42,6 @@ namespace StarVana.Handlers
 
             return starshipList;
         }
-
 
     }
 }
